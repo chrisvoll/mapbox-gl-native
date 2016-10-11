@@ -9,6 +9,7 @@
 #include <mbgl/renderer/bucket.hpp>
 
 #include <mbgl/gl/context.hpp>
+#include <mbgl/programs/program_parameters.hpp>
 #include <mbgl/programs/fill_program.hpp>
 #include <mbgl/programs/raster_program.hpp>
 
@@ -66,7 +67,7 @@ struct FrameData {
 
 class Painter : private util::noncopyable {
 public:
-    Painter(gl::Context&, const TransformState&);
+    Painter(gl::Context&, const TransformState&, float pixelRatio);
     ~Painter();
 
     void render(const style::Style&,
