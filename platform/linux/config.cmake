@@ -40,6 +40,7 @@ macro(mbgl_platform_core)
         )
         if (IS_CI_BUILD)
             target_add_mason_package(mbgl-core PUBLIC mesa)
+            target_link_libraries(mbgl-core PUBLIC -lX11)
         else()
             target_link_libraries(mbgl-core
                 PUBLIC -lGL

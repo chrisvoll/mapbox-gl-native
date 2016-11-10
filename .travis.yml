@@ -143,6 +143,17 @@ matrix:
       env: BUILDTYPE=Release _CXX=clang++-3.8 _CC=clang-3.8 WITH_OSMESA=1
       addons: *clang38
 
+    # GLX - GCC 5 - Release
+    - os: linux
+      sudo: required
+      dist: trusty
+      language: cpp
+      compiler: "glx-gcc5-release"
+      env: BUILDTYPE=Release _CXX=g++-5 _CC=gcc-5
+      addons: *gcc5
+      before_script:
+        - mapbox_start_xvfb
+
     # EGL - GCC 5 - Release
     - os: linux
       sudo: required
