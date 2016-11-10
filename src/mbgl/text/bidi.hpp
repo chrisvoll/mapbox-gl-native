@@ -13,6 +13,7 @@ public:
     ~BiDi();
     
     std::u16string bidiTransform( const std::u16string& );
+    bool baseDirectionRightToLeft( const std::u16string& );
     
 private:
     UBiDiTransform* transform;

@@ -2,6 +2,7 @@
 
 #include <mbgl/text/bidi.hpp>
 #include <unicode/ushape.h>
+#include <unicode/ubidi.h>
 
 namespace mbgl {
 
@@ -37,6 +38,12 @@ std::u16string BiDi::bidiTransform( const std::u16string& input )
         return input;
 
     return std::u16string( outputText.get(), outputLength );
+}
+    
+bool BiDi::baseDirectionRightToLeft( const std::u16string& input )
+{
+    // This just looks for the first character with a strong direction property, it does not perform the BiDi algorithm
+    return ubidi_getBaseDirection( input.c_str(), static_cast<int32_t>( input.size() ) ) == UBIDI_RTL ? true : false;
 }
     
 } // end namespace mbgl
