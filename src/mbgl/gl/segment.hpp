@@ -23,5 +23,16 @@ public:
     std::size_t indexLength;
 };
 
+template <class Attributes>
+class SegmentVector : public std::vector<Segment> {
+public:
+    SegmentVector() = default;
+
+    template <class DrawMode>
+    SegmentVector(const VertexBuffer<typename Attributes::Vertex, DrawMode>& buffer) {
+        emplace_back(0, 0, buffer.vertexCount, 0);
+    }
+};
+
 } // namespace gl
 } // namespace mbgl
