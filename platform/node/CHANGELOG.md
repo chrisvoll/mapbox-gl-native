@@ -1,3 +1,7 @@
+# 3.4.2 - Novmeber 14, 2016
+
+- Switches Node.js Linux binary builds from OSMesa back to GLX/xvfb to remove a runtime dependency on `libOSMesa.so.8` and allow `libGL.so` to be supplied at runtime by alternate implementations, like the NVIDIA proprietary drivers.
+
 # 3.4.1 - Novmeber 10, 2016
 
 - Skips assigning clip IDs to tiles that won't be rendered, mitigating a `stencil mask overflow` error ([#6871](https://github.com/mapbox/mapbox-gl-native/pull/6871))
