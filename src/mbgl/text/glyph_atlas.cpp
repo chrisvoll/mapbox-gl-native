@@ -1,12 +1,12 @@
-#include <mbgl/text/glyph_atlas.hpp>
-#include <mbgl/text/glyph_atlas_observer.hpp>
-#include <mbgl/text/glyph_pbf.hpp>
 #include <mbgl/gl/context.hpp>
 #include <mbgl/platform/log.hpp>
 #include <mbgl/platform/platform.hpp>
+#include <mbgl/text/glyph_atlas.hpp>
+#include <mbgl/text/glyph_atlas_observer.hpp>
+#include <mbgl/text/glyph_pbf.hpp>
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 namespace mbgl {
 
@@ -32,7 +32,7 @@ void GlyphAtlas::requestGlyphRange(const FontStack& fontStack, const GlyphRange&
     }
 
     rangeSets.emplace(range,
-        std::make_unique<GlyphPBF>(this, fontStack, range, observer, fileSource));
+                      std::make_unique<GlyphPBF>(this, fontStack, range, observer, fileSource));
 }
 
 bool GlyphAtlas::hasGlyphRanges(const FontStack& fontStack, const GlyphRangeSet& glyphRanges) {
@@ -84,14 +84,12 @@ void GlyphAtlas::addGlyphs(uintptr_t tileUID,
                            const std::u16string& text,
                            const FontStack& fontStack,
                            const GlyphSet& glyphSet,
-                           GlyphPositions& face)
-{
+                           GlyphPositions& face) {
     std::lock_guard<std::mutex> lock(mtx);
 
     const std::map<uint32_t, SDFGlyph>& sdfs = glyphSet.getSDFs();
 
-    for (char16_t chr : text)
-    {
+    for (char16_t chr : text) {
         auto sdf_it = sdfs.find(chr);
         if (sdf_it == sdfs.end()) {
             continue;
@@ -99,14 +97,12 @@ void GlyphAtlas::addGlyphs(uintptr_t tileUID,
 
         const SDFGlyph& sdf = sdf_it->second;
         Rect<uint16_t> rect = addGlyph(tileUID, fontStack, sdf);
-        face.emplace(chr, Glyph{rect, sdf.metrics});
+        face.emplace(chr, Glyph{ rect, sdf.metrics });
     }
 }
 
-Rect<uint16_t> GlyphAtlas::addGlyph(uintptr_t tileUID,
-                                    const FontStack& fontStack,
-                                    const SDFGlyph& glyph)
-{
+Rect<uint16_t>
+GlyphAtlas::addGlyph(uintptr_t tileUID, const FontStack& fontStack, const SDFGlyph& glyph) {
     // Use constant value for now.
     const uint8_t buffer = 3;
 
@@ -148,7 +144,7 @@ Rect<uint16_t> GlyphAtlas::addGlyph(uintptr_t tileUID,
     assert(rect.x + rect.w <= image.size.width);
     assert(rect.y + rect.h <= image.size.height);
 
-    face.emplace(glyph.id, GlyphValue { rect, tileUID });
+    face.emplace(glyph.id, GlyphValue{ rect, tileUID });
 
     // Copy the bitmap
     const uint8_t* source = reinterpret_cast<const uint8_t*>(glyph.bitmap.data());
@@ -178,7 +174,7 @@ void GlyphAtlas::removeGlyphs(uintptr_t tileUID) {
                 const Rect<uint16_t>& rect = value.rect;
 
                 // Clear out the bitmap.
-                uint8_t *target = image.data.get();
+                uint8_t* target = image.data.get();
                 for (uint32_t y = 0; y < rect.h; y++) {
                     uint32_t y1 = image.size.width * (rect.y + y) + rect.x;
                     for (uint32_t x = 0; x < rect.w; x++) {

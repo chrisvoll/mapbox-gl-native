@@ -1,23 +1,23 @@
 #pragma once
 
+#include <mbgl/geometry/binpack.hpp>
+#include <mbgl/gl/object.hpp>
+#include <mbgl/gl/texture.hpp>
 #include <mbgl/text/glyph.hpp>
 #include <mbgl/text/glyph_set.hpp>
-#include <mbgl/geometry/binpack.hpp>
+#include <mbgl/util/exclusive.hpp>
+#include <mbgl/util/font_stack.hpp>
+#include <mbgl/util/image.hpp>
 #include <mbgl/util/noncopyable.hpp>
 #include <mbgl/util/optional.hpp>
-#include <mbgl/util/font_stack.hpp>
-#include <mbgl/util/exclusive.hpp>
 #include <mbgl/util/work_queue.hpp>
-#include <mbgl/util/image.hpp>
-#include <mbgl/gl/texture.hpp>
-#include <mbgl/gl/object.hpp>
 
 #include <atomic>
-#include <string>
-#include <unordered_set>
-#include <unordered_map>
-#include <mutex>
 #include <exception>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace mbgl {
@@ -44,7 +44,7 @@ public:
     // can be called from any thread.
     bool hasGlyphRanges(const FontStack&, const GlyphRangeSet&);
 
-    void setURL(const std::string &url) {
+    void setURL(const std::string& url) {
         glyphURL = url;
     }
 
@@ -73,15 +73,13 @@ public:
 private:
     void requestGlyphRange(const FontStack&, const GlyphRange&);
 
-    Rect<uint16_t> addGlyph(uintptr_t tileID,
-                            const FontStack&,
-                            const SDFGlyph&);
-
+    Rect<uint16_t> addGlyph(uintptr_t tileID, const FontStack&, const SDFGlyph&);
 
     FileSource& fileSource;
     std::string glyphURL;
 
-    std::unordered_map<FontStack, std::map<GlyphRange, std::unique_ptr<GlyphPBF>>, FontStackHash> ranges;
+    std::unordered_map<FontStack, std::map<GlyphRange, std::unique_ptr<GlyphPBF>>, FontStackHash>
+        ranges;
     std::mutex rangesMutex;
 
     std::unordered_map<FontStack, std::unique_ptr<GlyphSet>, FontStackHash> glyphSets;
@@ -92,8 +90,8 @@ private:
     GlyphAtlasObserver* observer = nullptr;
 
     struct GlyphValue {
-        GlyphValue(Rect<uint16_t> rect_, uintptr_t id)
-            : rect(std::move(rect_)), ids({ id }) {}
+        GlyphValue(Rect<uint16_t> rect_, uintptr_t id) : rect(std::move(rect_)), ids({ id }) {
+        }
         Rect<uint16_t> rect;
         std::unordered_set<uintptr_t> ids;
     };

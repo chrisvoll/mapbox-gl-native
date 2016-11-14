@@ -1,13 +1,13 @@
 #pragma once
 
-#include <mbgl/map/mode.hpp>
-#include <mbgl/style/layers/symbol_layer_properties.hpp>
 #include <mbgl/layout/symbol_feature.hpp>
 #include <mbgl/layout/symbol_instance.hpp>
+#include <mbgl/map/mode.hpp>
+#include <mbgl/style/layers/symbol_layer_properties.hpp>
 #include <mbgl/text/bidi.hpp>
 
-#include <memory>
 #include <map>
+#include <memory>
 #include <unordered_set>
 #include <vector>
 
@@ -40,8 +40,7 @@ public:
 
     bool canPrepare(GlyphAtlas&);
 
-    void prepare(uintptr_t tileUID,
-                 GlyphAtlas&);
+    void prepare(uintptr_t tileUID, GlyphAtlas&);
 
     std::unique_ptr<SymbolBucket> place(CollisionTile&);
 
@@ -72,8 +71,12 @@ private:
 
     // Adds placed items to the buffer.
     template <typename Buffer>
-    void addSymbols(Buffer&, const SymbolQuads&, float scale,
-                    const bool keepUpright, const style::SymbolPlacementType, const float placementAngle);
+    void addSymbols(Buffer&,
+                    const SymbolQuads&,
+                    float scale,
+                    const bool keepUpright,
+                    const style::SymbolPlacementType,
+                    const float placementAngle);
 
     const float overscaling;
     const float zoom;
@@ -92,8 +95,9 @@ private:
     GlyphRangeSet ranges;
     std::vector<SymbolInstance> symbolInstances;
     std::vector<SymbolFeature> features;
-    
-    BiDi bidi; // Consider moving this up to geometry tile worker to reduce reinstantiation costs; use of BiDi/ubiditransform object must be constrained to one thread
+
+    BiDi bidi; // Consider moving this up to geometry tile worker to reduce reinstantiation costs;
+               // use of BiDi/ubiditransform object must be constrained to one thread
 };
 
 } // namespace mbgl

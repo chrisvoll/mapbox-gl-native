@@ -1,7 +1,7 @@
-#include <mbgl/text/glyph_set.hpp>
-#include <mbgl/platform/log.hpp>
 #include <mbgl/math/minmax.hpp>
+#include <mbgl/platform/log.hpp>
 #include <mbgl/text/bidi.hpp>
+#include <mbgl/text/glyph_set.hpp>
 
 #include <cassert>
 
@@ -27,14 +27,19 @@ void GlyphSet::insert(uint32_t id, SDFGlyph&& glyph) {
     }
 }
 
-const std::map<uint32_t, SDFGlyph> &GlyphSet::getSDFs() const {
+const std::map<uint32_t, SDFGlyph>& GlyphSet::getSDFs() const {
     return sdfs;
 }
 
-const Shaping GlyphSet::getShaping(const std::u16string &string, const bool rightToLeft, const float maxWidth,
-                                    const float lineHeight, const float horizontalAlign,
-                                    const float verticalAlign, const float justify,
-                                    const float spacing, const Point<float> &translate) const {
+const Shaping GlyphSet::getShaping(const std::u16string& string,
+                                   const bool rightToLeft,
+                                   const float maxWidth,
+                                   const float lineHeight,
+                                   const float horizontalAlign,
+                                   const float verticalAlign,
+                                   const float justify,
+                                   const float spacing,
+                                   const Point<float>& translate) const {
     Shaping shaping(translate.x * 24, translate.y * 24, string);
 
     // the y offset *should* be part of the font metadata
@@ -55,16 +60,24 @@ const Shaping GlyphSet::getShaping(const std::u16string &string, const bool righ
     if (shaping.positionedGlyphs.empty())
         return shaping;
 
-    lineWrap(shaping, lineHeight, maxWidth, horizontalAlign, verticalAlign, justify, translate, rightToLeft);
+    lineWrap(shaping, lineHeight, maxWidth, horizontalAlign, verticalAlign, justify, translate,
+             rightToLeft);
 
     return shaping;
 }
 
-void align(Shaping &shaping, const float justify, const float horizontalAlign,
-           const float verticalAlign, const uint32_t maxLineLength, const float lineHeight,
-           const uint32_t line, const Point<float> &translate) {
-    const float shiftX = (justify - horizontalAlign) * maxLineLength + ::round(translate.x * 24/* one em */);
-    const float shiftY = (-verticalAlign * (line + 1) + 0.5) * lineHeight + ::round(translate.y * 24/* one em */);
+void align(Shaping& shaping,
+           const float justify,
+           const float horizontalAlign,
+           const float verticalAlign,
+           const uint32_t maxLineLength,
+           const float lineHeight,
+           const uint32_t line,
+           const Point<float>& translate) {
+    const float shiftX =
+        (justify - horizontalAlign) * maxLineLength + ::round(translate.x * 24 /* one em */);
+    const float shiftY =
+        (-verticalAlign * (line + 1) + 0.5) * lineHeight + ::round(translate.y * 24 /* one em */);
 
     for (auto& glyph : shaping.positionedGlyphs) {
         glyph.x += shiftX;
@@ -72,9 +85,12 @@ void align(Shaping &shaping, const float justify, const float horizontalAlign,
     }
 }
 
-void justifyLine(std::vector<PositionedGlyph> &positionedGlyphs, const std::map<uint32_t, SDFGlyph> &sdfs, uint32_t start,
-                 uint32_t end, float justify) {
-    PositionedGlyph &glyph = positionedGlyphs[end];
+void justifyLine(std::vector<PositionedGlyph>& positionedGlyphs,
+                 const std::map<uint32_t, SDFGlyph>& sdfs,
+                 uint32_t start,
+                 uint32_t end,
+                 float justify) {
+    PositionedGlyph& glyph = positionedGlyphs[end];
     auto it = sdfs.find(glyph.glyph);
     if (it != sdfs.end()) {
         const uint32_t lastAdvance = it->second.metrics.advance;
@@ -86,11 +102,16 @@ void justifyLine(std::vector<PositionedGlyph> &positionedGlyphs, const std::map<
     }
 }
 
-void GlyphSet::lineWrap(Shaping &shaping, const float lineHeight, const float maxWidth,
-                         const float horizontalAlign, const float verticalAlign,
-                         const float justify, const Point<float> &translate, const bool rightToLeft) const {
+void GlyphSet::lineWrap(Shaping& shaping,
+                        const float lineHeight,
+                        const float maxWidth,
+                        const float horizontalAlign,
+                        const float verticalAlign,
+                        const float justify,
+                        const Point<float>& translate,
+                        const bool rightToLeft) const {
     float lineFeedOffset = rightToLeft ? -lineHeight : lineHeight;
-    
+
     uint32_t lastSafeBreak = 0;
 
     uint32_t lengthBeforeCurrentLine = 0;
@@ -99,11 +120,11 @@ void GlyphSet::lineWrap(Shaping &shaping, const float lineHeight, const float ma
 
     uint32_t maxLineLength = 0;
 
-    std::vector<PositionedGlyph> &positionedGlyphs = shaping.positionedGlyphs;
+    std::vector<PositionedGlyph>& positionedGlyphs = shaping.positionedGlyphs;
 
     if (maxWidth) {
         for (uint32_t i = 0; i < positionedGlyphs.size(); i++) {
-            PositionedGlyph &shape = positionedGlyphs[i];
+            PositionedGlyph& shape = positionedGlyphs[i];
 
             shape.x -= lengthBeforeCurrentLine;
             shape.y += lineFeedOffset * line;
@@ -137,13 +158,13 @@ void GlyphSet::lineWrap(Shaping &shaping, const float lineHeight, const float ma
             }
 
             // Spaces, plus word-breaking punctuation that often appears without surrounding spaces.
-            if (shape.glyph == 0x20 /* space */
-                || shape.glyph == 0x26 /* ampersand */
-                || shape.glyph == 0x2b /* plus sign */
-                || shape.glyph == 0x2d /* hyphen-minus */
-                || shape.glyph == 0x2f /* solidus */
-                || shape.glyph == 0xad /* soft hyphen */
-                || shape.glyph == 0xb7 /* middle dot */
+            if (shape.glyph == 0x20      /* space */
+                || shape.glyph == 0x26   /* ampersand */
+                || shape.glyph == 0x2b   /* plus sign */
+                || shape.glyph == 0x2d   /* hyphen-minus */
+                || shape.glyph == 0x2f   /* solidus */
+                || shape.glyph == 0xad   /* soft hyphen */
+                || shape.glyph == 0xb7   /* middle dot */
                 || shape.glyph == 0x200b /* zero-width space */
                 || shape.glyph == 0x2010 /* hyphen */
                 || shape.glyph == 0x2013 /* en dash */) {
@@ -160,8 +181,10 @@ void GlyphSet::lineWrap(Shaping &shaping, const float lineHeight, const float ma
 
     const uint32_t height = (line + 1) * lineHeight;
 
-    justifyLine(positionedGlyphs, sdfs, lineStartIndex, uint32_t(positionedGlyphs.size()) - 1, justify);
-    align(shaping, justify, horizontalAlign, verticalAlign, maxLineLength, lineHeight, line, translate);
+    justifyLine(positionedGlyphs, sdfs, lineStartIndex, uint32_t(positionedGlyphs.size()) - 1,
+                justify);
+    align(shaping, justify, horizontalAlign, verticalAlign, maxLineLength, lineHeight, line,
+          translate);
 
     // Calculate the bounding box
     shaping.top += -verticalAlign * height;
